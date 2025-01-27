@@ -5,8 +5,6 @@ public class Example
     public static void Main()
     {
         Example.PrintTimeAndWait();
-        Example.PrintTimeAndWait();
-        Example.PrintTimeAndWait();
 
     }
 
