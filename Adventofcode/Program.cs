@@ -72,6 +72,20 @@ public class Example
         Console.Write("Press <Enter> to exit... ");
 
 
+        // Gleiche Zahlen in Listen finden
+        List<int> similar = new();
+
+        foreach (int i in zahl1)
+            
+        {
+            if (zahl2.Contains(i))
+            {
+                similar.Add(i);
+                Console.Write(similar);
+             /*   int Anzahl = similar.Count();
+                Console.Write(Anzahl); */
+            }
+        }
 
     }
 }
