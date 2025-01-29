@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 
 public class Example
@@ -10,12 +11,14 @@ public class Example
 
         Example.Day1DistanceCalculate();
         Example.Day1Part2Calculate();
+        Example.Day2Part1SafetyReport();
         Example.Stop();
 
     }
 
     public static void Stop()
     {
+        Console.WriteLine("Press Enter to close...");
         while (Console.ReadKey().Key != ConsoleKey.Enter) { }
     }
 
@@ -45,8 +48,11 @@ public class Example
     {
 
         const string fileName = "day2.txt";   // Datei finden
-        List<int> data = Example.readFileDataDay2(fileName);  // Datei auslesen und verarbeiten zu data
-        bool safety = Example.checkSafety(data);
+        List<int[]> data = Example.readFileDataDay2(fileName);  // Datei auslesen und verarbeiten zu data
+        List<int[]> istSicher = Example.checkSafety(data);  // Sichere Reports sammeln
+        int anzahlSichererReports = Example.sichereReportsZählen(istSicher);  // Sichere Reports zählen
+
+
     }
 
 
@@ -75,14 +81,14 @@ public class Example
 
 
 
-        return new Tuple<List<int>, List<int>>( Liste1, Liste2 );
+        return new Tuple<List<int>, List<int>>(Liste1, Liste2);
 
     }
 
-    public static List<int> readFileDataDay2(string fileName)
+    public static List<int[]> readFileDataDay2(string fileName)
     {
         const Int32 BufferSize = 128;
-        List<int> zahlenblöcke = new();
+        List<int[]> zahlenblöcke = new();
 
         using (var fileStream = File.OpenRead(fileName))
         using (var streamReader = new StreamReader(fileStream, Encoding.UTF8, true, BufferSize))
@@ -90,7 +96,9 @@ public class Example
             string line;
             while ((line = streamReader.ReadLine()) != null)  // Datei lesen
             {
-                int zahlenblock = Convert.ToInt32(line);
+
+                string[] numbers = line.Split(" ");
+                int[] zahlenblock = Array.ConvertAll(numbers, int.Parse);
                 zahlenblöcke.Add(zahlenblock);
             }
         }
@@ -134,10 +142,11 @@ public class Example
         {
             Console.Write($"Zahl: {item.Key} kommt {item.Value} mal vor");  // Key = Zahl aus Dic 2, Value = Anzahl der Zahl in Dic 1
             Console.WriteLine(" ");
-        
+
         }
 
     }
+
 
 
     public static Dictionary<int, int> findSimilarNumbers(Tuple<List<int>, List<int>> data)
@@ -181,11 +190,11 @@ public class Example
 
     public static int gleicheZahlenMultiplizierenUndAddieren(Dictionary<int, int> similarities)
     {
-        int Produkt = 0;
+        int Produkt = 0;  // Produkt
 
-        foreach (var item in similarities)
+        foreach (var item in similarities)  
         {
-            Produkt += Math.Abs(item.Key * item.Value);
+            Produkt += Math.Abs(item.Key * item.Value);  // Zahl mit Anzahl multiplizieren
 
 
         }
@@ -194,35 +203,109 @@ public class Example
     }
 
 
-    public static bool checkSafety(List<int> list)
-    {
-        foreach (var line in list)
-        {
-            int vorherigeZahl = int.MinValue;
-            bool chronologisch = true;
 
-            foreach (int i in line)
+    public static bool IsZeileAufsteigend(int[] zeile)  // Überprüfen ob die Zeilen aufsteigend sind
+    {
+        
+        for (int i = 0; i < zeile.Length -1; i++)  // Loop --> checkt wie lang die Zeile ist und macht für jede Zahl in der Zeile einen Durchlauf
+        {
+            if (zeile[i] >= zeile[i + 1])  // Wenn Zahl größer als nächste Zahl dann falsch, aka nicht aufsteigend
             {
-                if (i > vorherigeZahl)
-                {
-                    chronologisch = true;
-                    vorherigeZahl = i;
-                }
-                else if (i < vorherigeZahl)
-                {
-                    chronologisch = true;
-                    vorherigeZahl = i;
-                }
-                else
-                {
-                    return false;
-                }
-              
+                return false;
             }
-          
         }
+        
+        return true; // Ansonstend richtig, aka aufsteigend
     }
 
 
-  
+    public static bool IsZeileAbsteigend(int[] zeile)  // Überprüfen ob die Zeilen absteigend sind
+    {
+
+            for (int i = 0; i < zeile.Length-1; i++)  // Loop --> checkt wie lang die Zeile ist und macht für jede Zahl in der Zeile einen Durchlauf
+        {
+                if (zeile[i] <= zeile[i + 1])  // Wenn Zahl kleiner als nächste Zahl dann falsch, aka nicht absteigend
+                {
+                    return false;
+                }
+            }
+        
+        return true;  // Ansonstend richtig, aka absteigend
+    }
+
+
+    public static bool checkDifference(int[] zeile)  // Überprüfe die Differenz der einzelnen Zahlen innerhalb einer Reihe
+    {
+
+        for (int i = 0; i < zeile.Length - 1; i++)  // Loop --> checkt wie lang die Zeile ist und macht für jede Zahl in der Zeile einen Durchlauf
+        {
+            int differenz = Math.Abs(zeile[i] - zeile[i + 1]);  // Differenz der Zahl und der nächsten Zahl ausrechnen
+
+            if (differenz > 3 || differenz <= 0)  // Wenn Differenz über drei oder unter/gleich null dann falsch
+            {
+                return false;
+            }
+        }
+
+        return true;  // Ansonsten richtig
+    }
+
+    public static List<int[]> checkSafety(List<int[]> data)  // Überprüft ob die einzelnen Zeilen den Anforderungen entsprechen, aka sicher sind
+    {
+        List<int[]> chronologischeZeilen= new();  // Neue Liste für die sicheren Zeilen
+
+        foreach (int[] zeile in data)
+        {
+            var istAufsteigend = IsZeileAufsteigend(zeile);
+
+            if (istAufsteigend)  // Wenn aufsteigend und...
+            {
+                
+                if (checkDifference(zeile))  // ...wenn Differenz stimmt dann füge Zeile zur Liste hinzu
+                {
+                    chronologischeZeilen.Add(zeile);
+                }
+            }
+            else
+            {
+                var istAbsteigend = IsZeileAbsteigend(zeile);
+
+                if (istAbsteigend)  // Wenn absteigend und...
+                {
+                    if (checkDifference(zeile))  // ...wenn Differenz stimmt dann füge Zeile zur Liste hinzu
+                    {
+                        chronologischeZeilen.Add(zeile);
+                    }
+                }
+
+            }
+            
+
+        }
+        return chronologischeZeilen;
+    }
+
+    public static int sichereReportsZählen (List<int[]> istSicher)  // Zählt die Anzahl der sicheren Zeilen
+    {
+        int anzahl = 0 ;  // Anzahl der sicheren Zeilen
+
+        foreach (int[] report in istSicher)  // Bei jedem Zahlen array in der Liste...
+        {
+            anzahl++;  // ...füge einen Wert der Anzahl hinzu
+        }
+        Console.WriteLine($"Anzahl sicherer Reports: {anzahl}");  // Gibt die Anzahl wieder
+        return anzahl;
+
+    }
+
+
+
+
+
+
+
+
+
+
 }
+
