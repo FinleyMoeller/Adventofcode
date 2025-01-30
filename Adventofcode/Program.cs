@@ -202,63 +202,143 @@ public class Example
 
         return Produkt;
     }
-
-    public static List<int[]> checkRequirements = new List<int[]> bereitsKorrigiert();
-    public static bool IsZeileAufsteigend(int[] zeile)  // Überprüfen ob die Zeilen aufsteigend sind
+    public static bool IsZeileAufsteigend(ref int[] zeile, bool doCleanup)  // Überprüfen ob die Zeilen aufsteigend sind
     {
 
         for (int i = 0; i < zeile.Length - 1; i++)  // Loop --> checkt wie lang die Zeile ist und macht für jede Zahl in der Zeile einen Durchlauf
         {
             if (zeile[i] >= zeile[i + 1])  // Wenn Zahl größer als nächste Zahl dann falsch, aka nicht aufsteigend
-            {
-                zeile = zeile.Except(new int[] { zeile[i + 1] }).ToArray();
-                for (int a = 0; a < zeile.Length - 1; a++)
+            {               
+                if (doCleanup)
                 {
-                    if (zeile[a] >= zeile[a + 1])
+                    if (zeile.Length > (i + 2)) 
                     {
-                        return false;
+                        if (zeile[i] >= zeile[i + 1] && zeile[i + 1] < zeile[i + 2])
+                        {
+                            zeile = zeile.Where((val, index) => index != i).ToArray();
+
+                            for (int a = 0; a < zeile.Length - 1; a++)
+                            {
+                                if (zeile[a] >= zeile[a + 1])
+                                {
+                                    return false;
+                                }
+                            }
+                            return true; // Ansonstend richtig, aka aufsteigend
+                        }
                     }
+
+                    else
+                    {
+                        zeile = zeile.Where((val, index) => index != i + 1).ToArray();
+                    }
+
+                    for (int a = 0; a < zeile.Length - 1; a++)
+                    {
+                        if (zeile[a] >= zeile[a + 1])
+                        {
+                            return false;
+                        }
+                    }
+                    return true; // Ansonstend richtig, aka aufsteigend
+
                 }
+                return false;
             }
+            
+           
         }
 
         return true; // Ansonstend richtig, aka aufsteigend
     }
 
 
-    public static bool IsZeileAbsteigend(int[] zeile)  // Überprüfen ob die Zeilen absteigend sind
+    public static bool IsZeileAbsteigend(ref int[] zeile, bool doCleanup)  // Überprüfen ob die Zeilen absteigend sind
     {
 
         for (int i = 0; i < zeile.Length - 1; i++)  // Loop --> checkt wie lang die Zeile ist und macht für jede Zahl in der Zeile einen Durchlauf
         {
             if (zeile[i] <= zeile[i + 1])  // Wenn Zahl kleiner als nächste Zahl dann falsch, aka nicht absteigend
             {
-                zeile = zeile.Except(new int[] { zeile[i + 1] }).ToArray();
-                for (int a = 0; a < zeile.Length - 1; a++)
+                if (doCleanup)
                 {
-                    if (zeile[a] <= zeile[a + 1])
+                    if (zeile.Length > (i + 2))
                     {
-                        return false;
+                        if (zeile[i] <= zeile[i + 1] && zeile[i + 1] > zeile[i + 2])
+                        {
+                            zeile = zeile.Where((val, index) => index != i).ToArray();
+
+                            for (int a = 0; a < zeile.Length - 1; a++)
+                            {
+                                if (zeile[a] <= zeile[a + 1])
+                                {
+                                    return false;
+                                }
+
+                            }
+                            return true; // Ansonstend richtig, aka aufsteigend
+                        }
+                     }
+                    else
+                    {
+                        zeile = zeile.Where((val, index) => index != i + 1).ToArray();
                     }
+
+                    for (int a = 0; a < zeile.Length - 1; a++)
+                    {
+                        if (zeile[a] <= zeile[a + 1])
+                        {
+                            return false;
+                        }
+
+                    }
+                    return true; // Ansonstend richtig, aka aufsteigend
+
                 }
+                return false;
             }
+            
         }
 
         return true;  // Ansonstend richtig, aka absteigend
     }
 
 
-    public static bool checkDifference(int[] zeile, bool doCleanup)  // Überprüfe die Differenz der einzelnen Zahlen innerhalb einer Reihe
+    public static bool checkDifference(ref int[] zeile, bool doCleanup)  // Überprüfe die Differenz der einzelnen Zahlen innerhalb einer Reihe
     {
+       
         for (int i = 0; i < zeile.Length - 1; i++)  // Loop --> checkt wie lang die Zeile ist und macht für jede Zahl in der Zeile einen Durchlauf
         {
+            
             int differenz = Math.Abs(zeile[i] - zeile[i + 1]);  // Differenz der Zahl und der nächsten Zahl ausrechnen
 
             if (differenz > 3 || differenz <= 0)  // Wenn Differenz über drei oder unter/gleich null dann falsch
             {
                 if (doCleanup)
                 {
-                    zeile = zeile.Except(new int[] { zeile[i + 1] }).ToArray();  // Falsche Zahl löschen
+                    if (zeile.Length > (i + 2))
+                    {
+                        if (differenz > 3 || differenz <= 0 && Math.Abs(zeile[i + 1] - zeile[i + 2]) !> 3 || Math.Abs(zeile[i + 1] - zeile[i + 2]) !<= 0)
+                        {
+                            zeile = zeile.Where((val, index) => index != i).ToArray();
+
+                            for (int a = 0; a < zeile.Length - 1; a++)
+                            {
+                                int differenz2 = Math.Abs(zeile[a] - zeile[a + 1]);  // Nochmal Differenz ausrechnen
+                                if (differenz2 > 3 || differenz2 <= 0)  // Wenn Differenz immer noch über drei oder unter/gleich null dann falsch
+                                {
+                                    return false;
+                                }
+
+                            }
+                            return true; // Ansonstend richtig, aka aufsteigend
+                        }
+
+                    }
+                    else
+                    {
+                        zeile = zeile.Where((val, index) => index != i + 1).ToArray();  // Falsche Zahl löschen
+                    }
 
                     for (int a = 0; a < zeile.Length - 1; a++)
                     {
@@ -267,7 +347,10 @@ public class Example
                         {
                             return false;
                         }
+                        
                     }
+                    
+                    return true; // Ansonstend richtig, aka aufsteigend
                 }
                 else {
                     return false;
@@ -285,65 +368,89 @@ public class Example
     {
         List<int[]> sichereZeilen = new();  // Neue Liste für die sicheren Zeilen
         List<int[]> NICHTsichereZeilen = new();  // Neue Liste für die sicheren Zeilen
+        List<int[]> schlechteZeilen = new();  // Neue Liste für die sicheren Zeilen
+
 
         foreach (int[] zeile in data)
         {
-            var istAufsteigend = IsZeileAufsteigend(zeile);
+            int[] neueZeile = zeile;
+            var istAufsteigend = IsZeileAufsteigend(ref neueZeile, false);
 
             if (istAufsteigend)  // Wenn aufsteigend und...
             {
 
-                if (checkDifference(zeile, true))
+                if (checkDifference(ref neueZeile, true))
                 // ...wenn Differenz stimmt dann füge Zeile zur Liste hinzu
                 {
-                    sichereZeilen.Add(zeile);
+                    sichereZeilen.Add(neueZeile);
+                }
+                else
+                {
+                    NICHTsichereZeilen.Add(neueZeile);
                 }
             }
             else
             {
-                var istAbsteigend = IsZeileAbsteigend(zeile);
+                neueZeile = zeile;
+                var istAbsteigend = IsZeileAbsteigend(ref neueZeile, false);
 
                 if (istAbsteigend)  // Wenn absteigend und...
                 {
-                    if (checkDifference(zeile, true))  // ...wenn Differenz stimmt dann füge Zeile zur Liste hinzu
+                    if (checkDifference(ref neueZeile, true))  // ...wenn Differenz stimmt dann füge Zeile zur Liste hinzu
                     {
-                        sichereZeilen.Add(zeile);
+                        sichereZeilen.Add(neueZeile);
+                    }
+                    else
+                    {
+                        NICHTsichereZeilen.Add(neueZeile);
                     }
                 }
                 else
                 {
-                    NICHTsichereZeilen.Add(zeile);
+                    NICHTsichereZeilen.Add(neueZeile);
                 }
             }
-
-
-
-
         }
+
 
 
         foreach (int[] zeile in NICHTsichereZeilen)
         {
-            var istAufsteigend = IsZeileAufsteigend(zeile, true);
+            int[] neueZeile = zeile;
+            var istAufsteigend = IsZeileAufsteigend(ref neueZeile, true);
 
             if (istAufsteigend)  // Wenn aufsteigend und...
             {
 
-                if (checkDifference(zeile, false))  // ...wenn Differenz stimmt dann füge Zeile zur Liste hinzu
+                if (checkDifference(ref neueZeile, false))  // ...wenn Differenz stimmt dann füge Zeile zur Liste hinzu
                 {
-                    sichereZeilen.Add(zeile);
+                    sichereZeilen.Add(neueZeile);
+                }
+                else
+                {
+                    schlechteZeilen.Add(zeile);
                 }
             }
             else
             {
-                var istAbsteigend = IsZeileAbsteigend(zeile, true);
+                neueZeile = zeile;
+                var istAbsteigend = IsZeileAbsteigend(ref neueZeile, true);
 
                 if (istAbsteigend)  // Wenn absteigend und...
                 {
-                    if (checkDifference(zeile, false))  // ...wenn Differenz stimmt dann füge Zeile zur Liste hinzu
+                    if (checkDifference(ref neueZeile, false))  // ...wenn Differenz stimmt dann füge Zeile zur Liste hinzu
                     {
-                        sichereZeilen.Add(zeile);
+                        sichereZeilen.Add(neueZeile);
                     }
+                    else
+                    {
+                        schlechteZeilen.Add(zeile);
+                    }
+
+                }
+                else
+                {
+                    schlechteZeilen.Add(zeile);
                 }
             }
         }
