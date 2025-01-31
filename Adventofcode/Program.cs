@@ -211,31 +211,77 @@ public class Example
             {               
                 if (doCleanup)
                 {
-                    if (zeile.Length > (i + 2)) 
+                    if (zeile.Length > (i + 2))
                     {
-                        if (zeile[i] >= zeile[i + 1] && zeile[i + 1] < zeile[i + 2])
+                        // [ Wenn die nächste Zahl das Problem ist ]
+                        if (zeile[i] >= zeile[i + 1] && zeile[i + 1] < zeile[i + 2] && i != 0 && zeile[i - 1] > zeile[i + 1])  // Wenn Zahl größer als nächste Zahl & nächste Zahl kleiner als übernächste Zahl & Zahl nicht index 0 & vorherige Zahl größer als nächste Zahl
                         {
-                            zeile = zeile.Where((val, index) => index != i).ToArray();
+                            zeile = zeile.Where((val, index) => index != i + 1).ToArray();  // Lösche nächste Zahl
 
-                            for (int a = 0; a < zeile.Length - 1; a++)
+                            for (int a = 0; a < zeile.Length - 1; a++)  
                             {
-                                if (zeile[a] >= zeile[a + 1])
+                                if (zeile[a] >= zeile[a + 1])  // Nochmal auf chronologie checken
                                 {
                                     return false;
                                 }
                             }
                             return true; // Ansonstend richtig, aka aufsteigend
                         }
-                    }
+                        
+                        // [ Wenn die jetzige Zahl das Problem ist [ 5 3 4 6, i = 0 ]]
+                       else if (zeile[i] >= zeile[i + 1] && zeile[i + 1] < zeile[i + 2] && zeile[i - 1] != zeile[i + 1])  // Wenn Zahl größer als nächste Zahl & nächste Zahl kleiner als übernächste Zahl
+                        {
+                            zeile = zeile.Where((val, index) => index != i).ToArray();  // Lösche Zahl
 
+                            for (int a = 0; a < zeile.Length - 1; a++)
+                            {
+                                if (zeile[a] >= zeile[a + 1])  // Nochmal auf chronologie checken
+                                {
+                                    return false;
+                                }
+                            }
+                            return true; // Ansonstend richtig, aka aufsteigend
+                        }
+
+                        // [ Wenn die jetzige Zahl das Problem ist [ 1 3 2 4, i = 1 ]]
+                        else if (zeile[i] >= zeile[i + 1] && i != 0 && zeile[i - 1] < zeile[i + 1] && zeile[i - 1] != zeile[i + 1])  // wenn Zahl größer als nächste Zahl & Zahl nicht index 0 & vorherige Zahl kleiner als nächste Zahl
+                        {
+                            zeile = zeile.Where((val, index) => index != i).ToArray();  // Lösche Zahl
+
+                            for (int a = 0; a < zeile.Length - 1; a++)
+                            {
+                                if (zeile[a] >= zeile[a + 1])  // Nochmal auf chronologie checken
+                                {
+                                    return false;
+                                }
+                            }
+                            return true; // Ansonstend richtig, aka aufsteigend
+                        }
+                        
+                        else if (zeile[i] >= zeile[i + 1] && i != 0 && zeile[i + 1] == zeile[i - 1])
+                        {
+                            zeile = zeile.Where((val, index) => index != i + 1).ToArray();  // Lösche Zahl
+
+                            for (int a = 0; a < zeile.Length - 1; a++)
+                            {
+                                if (zeile[a] >= zeile[a + 1])  // Nochmal auf chronologie checken
+                                {
+                                    return false;
+                                }
+                            }
+                            return true; // Ansonstend richtig, aka aufsteigend
+                        }
+
+                    }
+                    
                     else
                     {
-                        zeile = zeile.Where((val, index) => index != i + 1).ToArray();
+                        zeile = zeile.Where((val, index) => index != i + 1).ToArray();  // Lösche nächste Zahl
                     }
 
                     for (int a = 0; a < zeile.Length - 1; a++)
                     {
-                        if (zeile[a] >= zeile[a + 1])
+                        if (zeile[a] >= zeile[a + 1])  // Nochmal auf chronologie checken
                         {
                             return false;
                         }
@@ -264,13 +310,29 @@ public class Example
                 {
                     if (zeile.Length > (i + 2))
                     {
-                        if (zeile[i] <= zeile[i + 1] && zeile[i + 1] > zeile[i + 2])
+                        // [ Wenn die nächste Zahl das Problem ist ]
+                        if (zeile[i] <= zeile[i + 1] && zeile[i + 1] > zeile[i + 2] && i != 0 && zeile[i - 1] < zeile[i + 1])  // Wenn Zahl kleiner als nächste Zahl & nächste Zahl größer als übernächste Zahl & Zahl nicht index 0 & vorherige Zahl kleiner als nächste Zahl
                         {
-                            zeile = zeile.Where((val, index) => index != i).ToArray();
+                            zeile = zeile.Where((val, index) => index != i + 1).ToArray();  // Lösche nächste Zahl
+
+                            for (int a = 0; a < zeile.Length - 1; a++)  
+                            {
+                                if (zeile[a] <= zeile[a + 1])  // Nochmal auf chronologie checken
+                                {
+                                    return false;
+                                }
+                            }
+                            return true; // Ansonstend richtig, aka aufsteigend
+                        }
+
+                        // [ Wenn die jetzige Zahl das Problem ist ]
+                        else if (zeile[i] <= zeile[i + 1] && zeile[i + 1] > zeile[i + 2])  // Wenn Zahl kleiner als nächste Zahl & nächste Zahl größer als übernächste Zahl
+                        {
+                            zeile = zeile.Where((val, index) => index != i).ToArray();  // Lösche Zahl
 
                             for (int a = 0; a < zeile.Length - 1; a++)
                             {
-                                if (zeile[a] <= zeile[a + 1])
+                                if (zeile[a] <= zeile[a + 1])  // Nochmal auf chronologie checken
                                 {
                                     return false;
                                 }
@@ -278,15 +340,46 @@ public class Example
                             }
                             return true; // Ansonstend richtig, aka aufsteigend
                         }
-                     }
+
+                        // [ Wenn die jetzige Zahl das Problem ist ]
+                           else if (zeile[i] <= zeile[i + 1] && i != 0 && zeile[i - 1] > zeile[i + 1] && zeile[i - 1] != zeile[i + 1])  // Wenn Zahl kleiner als nächste Zahl & Zahl nicht index 0 & vorherige Zahl größer als nächste Zahl
+                            {
+                                zeile = zeile.Where((val, index) => index != i).ToArray();  // Lösche Zahl
+
+                                for (int a = 0; a < zeile.Length - 1; a++)
+                                {
+                                    if (zeile[a] <= zeile[a + 1])  // Nochmal auf chronologie checken
+                                {
+                                        return false;
+                                    }
+                                }
+                                return true; // Ansonstend richtig, aka aufsteigend
+                            }
+
+
+                        else if (zeile[i] <= zeile[i + 1] && i != 0 && zeile[i + 1] == zeile[i - 1])
+                        {
+                            zeile = zeile.Where((val, index) => index != i + 1).ToArray();  // Lösche Zahl
+
+                            for (int a = 0; a < zeile.Length - 1; a++)
+                            {
+                                if (zeile[a] <= zeile[a + 1])  // Nochmal auf chronologie checken
+                                {
+                                    return false;
+                                }
+                            }
+                            return true; // Ansonstend richtig, aka aufsteigend
+                        }
+
+                    }
                     else
                     {
-                        zeile = zeile.Where((val, index) => index != i + 1).ToArray();
+                        zeile = zeile.Where((val, index) => index != i + 1).ToArray();  // Lösche nächste Zahl
                     }
 
                     for (int a = 0; a < zeile.Length - 1; a++)
                     {
-                        if (zeile[a] <= zeile[a + 1])
+                        if (zeile[a] <= zeile[a + 1])  // Nochmal auf chronologie checken
                         {
                             return false;
                         }
@@ -312,17 +405,17 @@ public class Example
             
             int differenz = Math.Abs(zeile[i] - zeile[i + 1]);  // Differenz der Zahl und der nächsten Zahl ausrechnen
 
-            if (differenz > 3 || differenz <= 0)  // Wenn Differenz über drei oder unter/gleich null dann falsch
+            if (differenz > 3 || differenz <= 0)  // Wenn Differenz über drei oder unter/gleich null
             {
-                if (doCleanup)
+                if (doCleanup)  // Wenn CleanUp erlaubt
                 {
                     if (zeile.Length > (i + 2))
                     {
-                        if (differenz > 3 || differenz <= 0 && Math.Abs(zeile[i + 1] - zeile[i + 2]) !> 3 || Math.Abs(zeile[i + 1] - zeile[i + 2]) !<= 0)
+                        if (differenz > 3 || differenz <= 0 && Math.Abs(zeile[i + 1] - zeile[i + 2]) !> 3 || Math.Abs(zeile[i + 1] - zeile[i + 2]) !<= 0)  // Wenn Differenz zwischen ersten beiden Zahlen falsch und zwischen nächsten beiden richtig
                         {
-                            zeile = zeile.Where((val, index) => index != i).ToArray();
+                            zeile = zeile.Where((val, index) => index != i).ToArray();  // lösche jetzige Zahl
 
-                            for (int a = 0; a < zeile.Length - 1; a++)
+                            for (int a = 0; a < zeile.Length - 1; a++)  // Loop
                             {
                                 int differenz2 = Math.Abs(zeile[a] - zeile[a + 1]);  // Nochmal Differenz ausrechnen
                                 if (differenz2 > 3 || differenz2 <= 0)  // Wenn Differenz immer noch über drei oder unter/gleich null dann falsch
@@ -366,6 +459,7 @@ public class Example
 
     public static List<int[]> checkSafety(List<int[]> data)  // Überprüft ob die einzelnen Zeilen den Anforderungen entsprechen, aka sicher sind
     {
+        List<int[]> korrigierteZeilen = new();
         List<int[]> sichereZeilen = new();  // Neue Liste für die sicheren Zeilen
         List<int[]> NICHTsichereZeilen = new();  // Neue Liste für die sicheren Zeilen
         List<int[]> schlechteZeilen = new();  // Neue Liste für die sicheren Zeilen
@@ -379,14 +473,13 @@ public class Example
             if (istAufsteigend)  // Wenn aufsteigend und...
             {
 
-                if (checkDifference(ref neueZeile, true))
-                // ...wenn Differenz stimmt dann füge Zeile zur Liste hinzu
+                if (checkDifference(ref neueZeile, true))  // ...wenn Differenz stimmt dann füge Zeile zur Liste hinzu
                 {
                     sichereZeilen.Add(neueZeile);
                 }
                 else
                 {
-                    NICHTsichereZeilen.Add(neueZeile);
+                    NICHTsichereZeilen.Add(neueZeile);  // Ansonsten füge Zeilen zur Liste2 hinzu
                 }
             }
             else
@@ -402,12 +495,12 @@ public class Example
                     }
                     else
                     {
-                        NICHTsichereZeilen.Add(neueZeile);
+                        NICHTsichereZeilen.Add(neueZeile);  // Ansonsten füge Zeilen zur Liste2 hinzu
                     }
                 }
                 else
                 {
-                    NICHTsichereZeilen.Add(neueZeile);
+                    NICHTsichereZeilen.Add(neueZeile);  // Ansonsten füge Zeilen zur Liste2 hinzu
                 }
             }
         }
@@ -424,11 +517,8 @@ public class Example
 
                 if (checkDifference(ref neueZeile, false))  // ...wenn Differenz stimmt dann füge Zeile zur Liste hinzu
                 {
+                    korrigierteZeilen.Add(neueZeile);
                     sichereZeilen.Add(neueZeile);
-                }
-                else
-                {
-                    schlechteZeilen.Add(zeile);
                 }
             }
             else
@@ -440,17 +530,14 @@ public class Example
                 {
                     if (checkDifference(ref neueZeile, false))  // ...wenn Differenz stimmt dann füge Zeile zur Liste hinzu
                     {
+                        korrigierteZeilen.Add(neueZeile);
                         sichereZeilen.Add(neueZeile);
-                    }
-                    else
-                    {
-                        schlechteZeilen.Add(zeile);
                     }
 
                 }
                 else
                 {
-                    schlechteZeilen.Add(zeile);
+                    schlechteZeilen.Add(zeile);  // Ansonsten füge Zeile zu unsicheren Zeilen hinzu
                 }
             }
         }
@@ -469,15 +556,6 @@ public class Example
         return anzahl;
 
     }
-
-
-
-
-
-
-
-
-
 
 }
 
