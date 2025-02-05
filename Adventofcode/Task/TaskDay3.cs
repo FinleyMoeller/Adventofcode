@@ -29,7 +29,7 @@ namespace Adventofcode.Task
 
         public int ExecutePart2()
         {
-            List<string> data = ReadFileDataDay3(FilePath.GetFilePath(this._filename), true);  // Datei auslesen und verarbeiten zu data
+            List<string> data = ReadFileDataDay3(FilePath.GetFilePath(this._filename), true);  // Datei auslesen und verarbeiten zu data, muls rausfiltern
             int result = FilterForWordAndCalculateResult(data);  // Wörter filtern und zusammenrechnen
             ConsoleHelper.PrintResult("Day3 Part2", result);  // Resultat wiedergeben
             return result;
@@ -50,15 +50,15 @@ namespace Adventofcode.Task
                     
                     if (löschen == true)
                     {
-                        string wort1 = "don't()";
-                        string wort2 = "do()";
-                        string löschFilter = $@"{wort1}.*?{wort2}";
+                        string wort1 = $"don't()";
+                        string wort2 = $"do()";
+                        string löschFilter = $@"\b{wort1}\b.*?\b{wort2}\b";  // Filter der sich auf alle Zeichen zwischen don't() und do() bezieht
 
-                        line = Regex.Replace(line, löschFilter, $"{wort1}{wort2}");
+                        line = Regex.Replace(line, löschFilter, $"{wort1}{wort2}");  // Lösche alle Zeichen zwischen don't() und do()
 
-                        if (!line.Substring(line.LastIndexOf(wort1) + wort1.Length).Contains(wort2))  // Wenn don't() ohne
+                        if (!line.Substring(line.LastIndexOf(wort1) + wort1.Length).Contains(wort2))  // Wenn das letzte don't() ohne do() endet dann...
                         {
-                            line = line.Substring(0, line.LastIndexOf(wort1) + wort1.Length);
+                            line = line.Substring(0, line.LastIndexOf(wort1) + wort1.Length);  // ...lösche alle Zeichen ab don't()
                         }    
                     }
                     string filter = $@"\b\w+\(\d+,\s*\d+\)";  // Vorlage nach der gefiltert wird "mult(zahl, zahl)"

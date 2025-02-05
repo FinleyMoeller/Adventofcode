@@ -16,6 +16,7 @@ public class Example
         Example.Day1();
         Example.Day2();
         Example.Day3();
+        Example.Day4();
         Example.Stop();
 
     }
@@ -55,6 +56,15 @@ public class Example
 
         const string fileName = "day3.txt";
         var day1 = new TaskDay3(fileName);
+        day1.ExecutePart1();
+        day1.ExecutePart2();
+    }
+
+    public static void Day4()
+    {
+
+        const string fileName = "day4.txt";
+        var day1 = new TaskDay4(fileName);
         day1.ExecutePart1();
         day1.ExecutePart2();
     }
