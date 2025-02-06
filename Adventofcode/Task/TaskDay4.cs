@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Adventofcode.Utils;
@@ -21,8 +23,9 @@ namespace Adventofcode.Task
             string[] data = ReadFileDataDay4(FilePath.GetFilePath(this._filename));
             char[,] puzzleGrid = CreatePuzzleGrid(data);
             int[][] wortRichtung = RichtungVomWort;
-            int anzahl = WortFindenUndZählen(puzzleGrid, data);
-            return 0;
+            int result = WortFindenUndZählenRec(puzzleGrid, data);
+            ConsoleHelper.PrintResult("Day4 Part1", result);  // Resultat wiedergeben
+            return result;
         }
 
         public int ExecutePart2()
@@ -66,12 +69,11 @@ namespace Adventofcode.Task
             new int[] {1, 1},  // rechts hoch
             new int[] {1, -1},  // links hoch
         };
-
-        private int WortFindenUndZählen(char[,] puzzleGrid, string[] data)
+         private int WortFindenUndZählenRec(char[,] puzzleGrid, string[] data)
         {
-            char[] wort = {'X', 'M', 'A', 'S'};
+            char[] wort = { 'X', 'M', 'A', 'S' };  // Buchstaben des gesuchten Wortes
             int wortLänge = wort.Length;
-            int anzahl = 0;
+            int anzahl = 0;  // Anzahl der gefundenen Wörter
             string[] reihen = data;
             int reihenAnzahl = reihen.Length;
             int vertikaleReihenAnzahl = reihen[0].Length;
@@ -83,32 +85,47 @@ namespace Adventofcode.Task
                     if (puzzleGrid[x, y] == wort[0])  // Wenn irgendwo der erste Buchstabe vom Wort erkannt wird dann...
                     {
 
-                        var buchstabe = puzzleGrid[x, y];
-
-                        var start = new int[] {x, y};
-
-                        for (int i = 0; i < wortLänge; i++)  // Loop - für jeden Buchstaben im Wort einmal durchführen
+                        foreach (var richtung in RichtungVomWort)  // Für jeden Richtungswert
                         {
-                            foreach (var richtung in RichtungVomWort)  // Für jede mögliche Richtung ausführen
+                            if (SucheNachWort(puzzleGrid,data,x,y,richtung,wort,0))
                             {
-                                int searchX = x + richtung[0];  // Richtungswerte den Koordinaten hinzufügen
-                                int searchY = y + richtung[1];  // Richtungswerte den Koordinaten hinzufügen
-                                int index = 1;
-
-                                if (puzzleGrid[searchX, searchY] == wort[index])  // Wenn Buchstabe in Koordinate vorkommt dann...
-                                {
-                                    buchstabe = puzzleGrid[searchX, searchY];
-                                    index++;
-                                    return index;
-                                }
-                                
+                                anzahl++;  // Plus 1 Anzahl
                             }
-                            
                         }
                     }
                 }
             }
             return anzahl;
         }
+
+        private bool SucheNachWort(char[,] puzzleGrid, string[] data, int searchX, int searchY, int[] richtung, char[] wort, int indexWort)
+        {
+            indexWort++;  // Counter
+
+            if(indexWort +1 > wort.Length)  // 
+            {
+                return true;
+            }
+
+            searchX += richtung[0];  // Addiere Richtungswert zu koordinate x
+            searchY += richtung[1];  // Addiere Richtungswert zu koordinate y
+
+            if (searchX <0 || searchX+1 > data.Length)
+            {
+                return false;
+            }
+
+            if (searchY < 0 || searchY+1 > data[0].Length)
+            {
+                return false;
+            }
+            if(puzzleGrid[searchX, searchY] == wort[indexWort])  // Wenn Wort gefunden dann...
+            {
+                return SucheNachWort(puzzleGrid, data, searchX, searchY, richtung, wort, indexWort);  //...wiederhole
+            }
+            return false;
+            
+        }
+
     }
 }
