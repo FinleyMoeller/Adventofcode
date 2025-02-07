@@ -68,6 +68,5 @@ public class Example
         day1.ExecutePart1();
         day1.ExecutePart2();
     }
-
 }
 
